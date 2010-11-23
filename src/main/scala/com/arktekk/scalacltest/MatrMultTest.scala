@@ -1,9 +1,11 @@
 package com.arktekk.scalacltest
 
+import com.nativelibs4java.opencl.JavaCL
 
 object MatrMultTest {
 
   def main(args: Array[String]): Unit = {
+    println("Best device: " + JavaCL.getBestDevice)
     val start = System.currentTimeMillis
     multiplyMatrix
     println("Time: " + (System.currentTimeMillis - start))
@@ -21,6 +23,7 @@ object MatrMultTest {
       
       o(i)(j) = tot
     }
+    println("Avg: " + (o.foldLeft(0.0) { (v, a) => a.sum + v } / (n * n)))
   }
 
 }
