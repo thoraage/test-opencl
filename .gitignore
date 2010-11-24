@@ -2,3 +2,6 @@ target
 lib_managed
 .ensime
 project/boot
+*.iml
+*.ipr
+*.iws

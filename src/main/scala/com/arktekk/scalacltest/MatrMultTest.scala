@@ -19,7 +19,7 @@ object MatrMultTest {
     for (i <- 0 until n; j <- 0 until n) {
       var tot = 0.0
       for (k <- 0 until n)
-	tot += a(i)(k) * b(k)(j)
+	      tot += a(i)(k) * b(k)(j)
       
       o(i)(j) = tot
     }
