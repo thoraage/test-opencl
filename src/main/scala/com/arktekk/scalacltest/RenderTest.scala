@@ -7,9 +7,7 @@ object RenderTest extends TextRenderer {
   def height = 30
   def width = 80
 
-  def render: Unit = {
-    gpuSceneRenderDemo
-  }
+  def render: Unit = gpuRenderScene
 
   def cpuRender: Unit = {
     val screen = Array.ofDim[Byte](height, width)
