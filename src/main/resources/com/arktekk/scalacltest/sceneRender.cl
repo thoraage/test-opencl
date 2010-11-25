@@ -19,11 +19,40 @@ float hit(const float3 pos, const float3 dir, const float4 sphere) {
     return -1.0;
 }
 
+float3 normal(const float3 pos, const float3 dir, const float t, const float4 sphere) {
+  const float3 hitPoint = (float3)(pos.x + t*dir.x, pos.y + t*dir.y, pos.z + t*dir.z);
+  return (float3)(hitPoint.x - sphere.x, hitPoint.y - sphere.y, hitPoint.z - sphere.z);
+}
+
+float3 vectSub(const float3 v1, const float3 v2) {
+  return (float3)(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+}
+
+float3 vectConstMul(const float c, const float3 v) {
+  return (float3)(v.x * c, v.y * c, v.z * c);
+}
+
+float3 reflection(const float3 normal, const float3 incidence) {
+  return vectSub(incidence, vectConstMul(2, vectConstMul(dot(incidence, normal), normal)));
+}
+
+float vectLength(const float3 v) {
+  return sqrt(sqr(v.x) + sqr(v.y) + sqr(v.z));
+}
+
+float3 vectNormalize(const float3 v) {
+  const float len = vectLength(v);
+  return (float3)(v.x / len, v.y / len, v.z / len);
+}
+
 uchar render(const int x, const int y, const int width, const int height) {
   const float3 pos = (float3)(x - width / 2, y - height / 2, 0.0);
   const float3 dir = (float3)(0.0, 0.0, 1.0);
   const float4 sphere = (float4)(5.0, 5.0, 13.0, 15.0);
   const float t = hit(pos, dir, sphere);
+  const float3 norm = normal(pos, dir, t, sphere);
+  const float3 reflect = reflection(norm, dir);
+  const float angle = acos(dot(vectNormalize(norm), vectNormalize(reflect)));
   return t == -1.0 ? 0 : 1;
 }
 
