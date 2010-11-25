@@ -1,16 +1,17 @@
 package com.arktekk.scalacltest
 
-object RenderTest {
+/**
+ * @author Thor Åge Eldby (thoraageeldby@gmail.com)
+ */
+object RenderTest extends TextRenderer {
+  def height = 30
+  def width = 80
 
-  def pain(args: Array[String]): Unit = {
-    val start = System.currentTimeMillis
-    draw
-    println("Time: " + (System.currentTimeMillis - start))
+  def render: Unit = {
+    gpuSceneRenderDemo
   }
 
-  def draw: Unit = {
-    val height = 30
-    val width = 80
+  def cpuRender: Unit = {
     val screen = Array.ofDim[Byte](height, width)
     for (yIdx <- 0 until screen.size) {
       for (xIdx <- 0 until screen(yIdx).size) {
@@ -20,8 +21,24 @@ object RenderTest {
       }
     }
     screen.foreach {
-      row => println(row.foldLeft("") { (n, s) => n + s })
+      row => println(row.foldLeft("") {(n, s) => n + s})
     }
+  }
+
+  def gpuSceneRenderDemo: Unit = new FrameGPUProcessor {
+    def sourceFile = "sceneRenderDemo.cl"
+    def method = "sceneRender"
+    def width = RenderTest.width
+    def height = RenderTest.height
+    def workSize = width / 2    
+  }
+
+  def gpuRenderScene: Unit = new FrameGPUProcessor {
+    def sourceFile = "sceneRender.cl"
+    def method = "sceneRender"
+    def width = RenderTest.width
+    def height = RenderTest.height
+    def workSize = width / 2
   }
 
 }
