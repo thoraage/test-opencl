@@ -23,7 +23,7 @@ trait SwingRenderer extends Renderer {
     for (x <- 0 until width; y <- 0 until height) {
       val value = intBuffer.get(x + y * width)
       def crazyNormalize(v: Int) = v + v * 256 + v * 65536
-      if (random.nextBoolean)
+      if (false)//random.nextBoolean)
         image.setRGB(x, y, crazyNormalize(x * 256 / width))
       else
         image.setRGB(x, y, crazyNormalize(value / 256))
