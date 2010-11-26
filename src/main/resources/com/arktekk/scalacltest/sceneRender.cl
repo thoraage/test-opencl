@@ -48,12 +48,16 @@ float3 vectNormalize(const float3 v) {
 uchar render(const int x, const int y, const int width, const int height) {
   const float3 pos = (float3)(x - width / 2, y - height / 2, 0.0);
   const float3 dir = (float3)(0.0, 0.0, 1.0);
-  const float4 sphere = (float4)(5.0, 5.0, 13.0, 15.0);
+  const float3 lightDir = (float3)(1.0, 1.0, 1.0);  
+  const float4 sphere = (float4)(0.0, 0.0, 50.0, 15.0);
   const float t = hit(pos, dir, sphere);
-  const float3 norm = normal(pos, dir, t, sphere);
+  if (t == -1.0)
+    return 0;
+  const float3 norm = vectNormalize(normal(pos, dir, t, sphere));
   const float3 reflect = reflection(norm, dir);
-  const float angle = acos(dot(vectNormalize(norm), vectNormalize(reflect)));
-  return t == -1.0 ? 0 : 1;
+  const float angle = acos(dot(lightDir, vectNormalize(reflect)));
+  //return reflect.z > 0 ? 1 : 2;
+  return (uchar) ((angle / 3.14) * 9.0) + 1;
 }
 
 __kernel void sceneRender(const int width, const int workSize, __global uchar* output) {

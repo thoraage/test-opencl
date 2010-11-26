@@ -1,15 +1,22 @@
 package com.arktekk.scalacltest
 
+import Timer._
+
 /**
  * @author Thor Åge Eldby (thoraageeldby@gmail.com)
  */
-object RenderTest extends TextRenderer {
+object RenderTest {
   def height = 30
   def width = 80
 
-  def render: Unit = gpuRenderScene
+  def main(args: Array[String]): Unit = {
+    time {
+      object sceneRenderer extends SceneRenderer(80, 30) with TextRenderer
+      sceneRenderer.draw
+    }
+  }
 
-  def cpuRender: Unit = {
+  /*def cpuRender: Unit = {
     val screen = Array.ofDim[Byte](height, width)
     for (yIdx <- 0 until screen.size) {
       for (xIdx <- 0 until screen(yIdx).size) {
@@ -28,14 +35,14 @@ object RenderTest extends TextRenderer {
     def method = "sceneRender"
     def width = RenderTest.width
     def height = RenderTest.height
-    def workSize = width / 2    
-  }
+    def workSize = width / 2
+  }*/
 
-  def gpuRenderScene: Unit = new FrameGPUProcessor {
+  class SceneRenderer(w: Int, h: Int) extends FrameGPUProcessor {
     def sourceFile = "sceneRender.cl"
     def method = "sceneRender"
-    def width = RenderTest.width
-    def height = RenderTest.height
+    def width = w
+    def height = h
     def workSize = width / 2
   }
 
