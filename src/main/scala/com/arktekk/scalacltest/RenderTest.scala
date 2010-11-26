@@ -11,7 +11,7 @@ object RenderTest {
     object sceneRenderer extends SceneRenderer(80, 40) with TextRenderer
     //object sceneRenderer extends SceneRenderer(1024, 768) with SwingRenderer
     //object sceneRenderer extends SceneRenderer(4096, 3072) with NoRenderer
-    (0 until 5).foreach { _ =>
+    (0 until 1).foreach { _ =>
       time {
         sceneRenderer.draw
       }
