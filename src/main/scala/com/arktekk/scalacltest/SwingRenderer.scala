@@ -17,8 +17,8 @@ trait SwingRenderer extends Renderer {
   f.setVisible(true)
   val random = new Random
 
-  def draw: Unit = time {
-    val intBuffer = render
+  def draw: Unit = {
+    val intBuffer = time("Rendering: ") { render }
     val image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
     for (x <- 0 until width; y <- 0 until height) {
       val value = intBuffer.get(x + y * width)

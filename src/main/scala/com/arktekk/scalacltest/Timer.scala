@@ -5,10 +5,11 @@ package com.arktekk.scalacltest
  */
 
 object Timer {
-  def time[T](f: => T): T = {
+  def time[T](f: => T): T = time("Time: ")(f)
+  def time[T](msg: String)(f: => T): T = {
     val start = System.currentTimeMillis
     val v = f
-    println("Time: " + (System.currentTimeMillis - start))
+    println(msg + (System.currentTimeMillis - start))
     v
   }
 }
