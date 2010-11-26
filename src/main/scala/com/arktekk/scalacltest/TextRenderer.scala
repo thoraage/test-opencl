@@ -13,7 +13,7 @@ trait TextRenderer extends Renderer {
         println
       }
       val v = seq(idx)
-      print(if (v == 0) " " else (((v + 128) * 10 / 256).toString))
+      print(if (v == 0) " " else ((v * 10 / 65536).toString))
     }
     println
   }

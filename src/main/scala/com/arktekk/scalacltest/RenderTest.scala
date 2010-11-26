@@ -10,10 +10,12 @@ object RenderTest {
   def width = 80
 
   def main(args: Array[String]): Unit = {
-    time {
-      //object sceneRenderer extends SceneRenderer(80, 30) with TextRenderer
-      object sceneRenderer extends SceneRenderer(1024, 768) with SwingRenderer
-      sceneRenderer.draw
+    //object sceneRenderer extends SceneRenderer(80, 40) with TextRenderer
+    object sceneRenderer extends SceneRenderer(1024, 768) with SwingRenderer
+    (0 until 30).foreach { _ =>
+      time {
+        sceneRenderer.draw
+      }
     }
   }
 

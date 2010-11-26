@@ -45,23 +45,36 @@ float3 vectNormalize(const float3 v) {
   return (float3)(v.x / len, v.y / len, v.z / len);
 }
 
-int render(const float x, const float y) {
-  const float3 pos = (float3)(x, y, 0.0);
-  const float3 dir = (float3)(0.0, 0.0, 1.0);
-  const float3 lightDir = vectNormalize((float3)(1.0, 1.0, 1.0));  
-  const float4 sphere = (float4)(0.5, 0.0, 50.0, 0.25);
+float renderSphere(const float4 sphere, const float3 dir, const float3 lightDir, const float3 pos) {
   const float t = hit(pos, dir, sphere);
   if (t == -1.0)
     return 0;
   const float3 norm = vectNormalize(normal(pos, dir, t, sphere));
   const float3 reflect = reflection(norm, dir);
   const float angle = acos(dot(lightDir, vectNormalize(reflect)));
-  //return reflect.z > 0 ? 1 : 2;
-  return (int) (angle * 65535.0 / 3.142);
+  return angle / 3.142;
+}
+
+int render(const float x, const float y) {
+  const float3 pos = (float3)(x, y, 0.0);
+  const float3 dir = (float3)(0.0, 0.0, 1.0);
+  const float3 lightDir = vectNormalize((float3)(1.0, 1.0, 1.0));
+  const float4 spheres[4] = {
+    (float4)(0.5, 0.0, 50.0, 0.25),
+    (float4)(-0.5, 0.0, 50.0, 0.25),
+    (float4)(0.0, 0.3, 50.0, 0.25),
+    (float4)(0.0, -0.3, 50.0, 0.25)
+  };
+  float s = 0.0;
+  for (int i = 0; i < 4; ++i) {
+    s += renderSphere(spheres[i], dir, lightDir, pos);
+  }
+  return (int) (s * 65535.0);
 }
 
 __kernel void sceneRender(const int width, const int height, const int workSize, __global int* output) {
   int workItem = get_global_id(0);
+  float a[3] = {0.0f, 0.2f, 0.3f};
   for (int i = 0; i < workSize; ++i) {
     int pos = i + workItem * workSize;
     float x = pos % width - width / 2;
@@ -69,12 +82,3 @@ __kernel void sceneRender(const int width, const int height, const int workSize,
     output[pos] = render(2.0 * x / width, 2.0 * y / width);
   }
 }
-
-/**
-
-  x^2 + y^2 + z^2 = r^2
-
-  z = sqrt(x^2 + y^2 - r^2)
-
-
-*/
