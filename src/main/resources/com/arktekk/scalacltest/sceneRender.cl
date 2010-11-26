@@ -71,6 +71,13 @@ struct vector vectNormalize(const struct vector v) {
   return (struct vector) {v.x / len, v.y / len, v.z / len};
 }
 
+float fpow(const float v, const int p) {
+  float ret = 1.0;
+  for (int i = 0; i < p; ++i)
+    ret *= v;
+  return ret;
+}
+
 float trace(const struct spheres spheresStruct, const struct vector origDir, const struct vector lightDir, const struct vector origPos) {
   float s = 0.0;
   struct vector dir = origDir;
@@ -92,7 +99,7 @@ float trace(const struct spheres spheresStruct, const struct vector origDir, con
     const struct vector norm = vectNormalize(normal(pos, dir, t, sphere));
     const struct vector reflect = reflection(norm, dir);
     const float angle = acos(vectDot(lightDir, vectNormalize(reflect)));
-    s += angle / 3.142;
+    s += fpow(0.25, round) * angle / 3.142;
     pos = vectAdd(vectConstMul(t, dir), pos);
     dir = reflect;
   }
