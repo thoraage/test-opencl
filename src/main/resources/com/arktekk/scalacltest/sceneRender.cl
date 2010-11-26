@@ -50,6 +50,10 @@ struct vector vectSub(const struct vector v1, const struct vector v2) {
   return (struct vector){v1.x - v2.x, v1.y - v2.y, v1.z - v2.z};
 }
 
+struct vector vectAdd(const struct vector v1, const struct vector v2) {
+  return (struct vector){v1.x + v2.x, v1.y + v2.y, v1.z + v2.z};
+}
+
 struct vector vectConstMul(const float c, const struct vector v) {
   return (struct vector){v.x * c, v.y * c, v.z * c};
 }
@@ -67,25 +71,31 @@ struct vector vectNormalize(const struct vector v) {
   return (struct vector) {v.x / len, v.y / len, v.z / len};
 }
 
-float trace(const struct spheres spheresStruct, const struct vector dir, const struct vector lightDir, const struct vector pos) {
+float trace(const struct spheres spheresStruct, const struct vector origDir, const struct vector lightDir, const struct vector origPos) {
   float s = 0.0;
-  float t = -1.0;
-  int idx = -1;
-  for (int i = 0; i < spheresStruct.c; ++i) {
-    const struct sphere sphere = spheresStruct.ss[i];
-    const float tmp = hit(pos, dir, sphere);
-    if (tmp != -1.0 && (t == -1.0 || tmp < t)) {
-      t = tmp;
-      idx = i;
+  struct vector dir = origDir;
+  struct vector pos = origPos;
+  for (int round = 0; round < 10; ++round) {
+    float t = -1.0;
+    int idx = -1;
+    for (int i = 0; i < spheresStruct.c; ++i) {
+      const struct sphere sphere = spheresStruct.ss[i];
+      const float tmp = hit(pos, dir, sphere);
+      if (tmp != -1.0 && (t == -1.0 || tmp < t)) {
+        t = tmp;
+        idx = i;
+      }
     }
+    if (t == -1.0)
+      return s;
+    const struct sphere sphere = spheresStruct.ss[idx];
+    const struct vector norm = vectNormalize(normal(pos, dir, t, sphere));
+    const struct vector reflect = reflection(norm, dir);
+    const float angle = acos(vectDot(lightDir, vectNormalize(reflect)));
+    s += angle / 3.142;
+    pos = vectAdd(vectConstMul(t, dir), pos);
+    dir = reflect;
   }
-  if (t == -1.0)
-    return 0;
-  const struct sphere sphere = spheresStruct.ss[idx];
-  const struct vector norm = vectNormalize(normal(pos, dir, t, sphere));
-  const struct vector reflect = reflection(norm, dir);
-  const float angle = acos(vectDot(lightDir, vectNormalize(reflect)));
-  s += angle / 3.142;
   return s;
 }
 
@@ -99,7 +109,8 @@ int render(const float x, const float y) {
     {0.0, 0.0, 4.5, 0.25}
   };
   const struct spheres spheresStruct = { spheres, 3 };
-  return (int) (trace(spheresStruct, dir, lightDir, pos) * 65535.0);
+  const float s = trace(spheresStruct, dir, lightDir, pos);
+  return (int) ((s > 1.0 ? 1.0 : s) * 65535.0);
 }
 
 __kernel void sceneRender(const int width, const int height, const int workSize, __global int* output) {
