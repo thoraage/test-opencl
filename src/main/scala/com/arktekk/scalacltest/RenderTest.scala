@@ -6,14 +6,12 @@ import Timer._
  * @author Thor Åge Eldby (thoraageeldby@gmail.com)
  */
 object RenderTest {
-  def height = 30
-  def width = 80
 
   def main(args: Array[String]): Unit = {
     //object sceneRenderer extends SceneRenderer(80, 40) with TextRenderer
     //object sceneRenderer extends SceneRenderer(1024, 768) with SwingRenderer
-    object sceneRenderer extends SceneRenderer(1024, 768) with NoRenderer
-    (0 until 30).foreach { _ =>
+    object sceneRenderer extends SceneRenderer(4096, 3072) with NoRenderer
+    (0 until 5).foreach { _ =>
       time {
         sceneRenderer.draw
       }
@@ -47,7 +45,7 @@ object RenderTest {
     def method = "sceneRender"
     def width = w
     def height = h
-    def workSize = width / 2
+    def workSize = width * 10
   }
 
 }
