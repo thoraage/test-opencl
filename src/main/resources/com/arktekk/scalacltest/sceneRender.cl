@@ -45,11 +45,11 @@ float3 vectNormalize(const float3 v) {
   return (float3)(v.x / len, v.y / len, v.z / len);
 }
 
-uchar render(const int x, const int y, const int width, const int height) {
-  const float3 pos = (float3)(x - width / 2, y - height / 2, 0.0);
+int render(const float x, const float y) {
+  const float3 pos = (float3)(x, y, 0.0);
   const float3 dir = (float3)(0.0, 0.0, 1.0);
-  const float3 lightDir = (float3)(1.0, 1.0, 1.0);  
-  const float4 sphere = (float4)(0.0, 0.0, 50.0, 15.0);
+  const float3 lightDir = vectNormalize((float3)(1.0, 1.0, 1.0));  
+  const float4 sphere = (float4)(0.5, 0.0, 50.0, 0.25);
   const float t = hit(pos, dir, sphere);
   if (t == -1.0)
     return 0;
@@ -57,16 +57,16 @@ uchar render(const int x, const int y, const int width, const int height) {
   const float3 reflect = reflection(norm, dir);
   const float angle = acos(dot(lightDir, vectNormalize(reflect)));
   //return reflect.z > 0 ? 1 : 2;
-  return (uchar) ((angle / 3.14) * 9.0) + 1;
+  return (int) (angle * 65535.0 / 3.142);
 }
 
-__kernel void sceneRender(const int width, const int workSize, __global uchar* output) {
+__kernel void sceneRender(const int width, const int height, const int workSize, __global int* output) {
   int workItem = get_global_id(0);
   for (int i = 0; i < workSize; ++i) {
     int pos = i + workItem * workSize;
-    int x = pos % width;
-    int y = pos / width;
-    output[pos] = render(x, y, width, 30);
+    float x = pos % width - width / 2;
+    float y = pos / width - height / 2;
+    output[pos] = render(2.0 * x / width, 2.0 * y / width);
   }
 }
 

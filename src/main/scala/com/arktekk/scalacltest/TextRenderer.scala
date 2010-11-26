@@ -1,14 +1,9 @@
 package com.arktekk.scalacltest
 
-import java.nio.ByteBuffer
-
 /**
  * @author Thor Åge Eldby (thoraageeldby@gmail.com)
  */
 trait TextRenderer extends Renderer {
-  def render: ByteBuffer
-  def width: Int
-  def height: Int
   def draw: Unit = {
     val nioBytes = render
     val length = width * height
@@ -17,7 +12,8 @@ trait TextRenderer extends Renderer {
       if (idx != 0 && idx % width == 0) {
         println
       }
-      print(seq(idx).toString)
+      val v = seq(idx)
+      print(if (v == 0) " " else (((v + 128) * 10 / 256).toString))
     }
     println
   }

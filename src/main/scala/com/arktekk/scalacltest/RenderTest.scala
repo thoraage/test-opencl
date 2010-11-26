@@ -11,7 +11,8 @@ object RenderTest {
 
   def main(args: Array[String]): Unit = {
     time {
-      object sceneRenderer extends SceneRenderer(80, 30) with TextRenderer
+      //object sceneRenderer extends SceneRenderer(80, 30) with TextRenderer
+      object sceneRenderer extends SceneRenderer(1024, 768) with SwingRenderer
       sceneRenderer.draw
     }
   }

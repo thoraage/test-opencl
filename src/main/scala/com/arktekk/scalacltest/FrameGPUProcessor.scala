@@ -14,9 +14,9 @@ trait FrameGPUProcessor extends GPUProcessor {
   def method: String
   def render = {
     val bufLength = width * height
-    val nioBytes = NIOUtils.directBytes(bufLength, context.getByteOrder())
-    val resultsBuffer = context.createByteBuffer(CLMem.Usage.Output, nioBytes, false)
-    val kernel = program.createKernel(method, width.asInstanceOf[AnyRef], workSize.asInstanceOf[AnyRef], resultsBuffer)
+    val nioBytes = NIOUtils.directInts(bufLength, context.getByteOrder())
+    val resultsBuffer = context.createIntBuffer(CLMem.Usage.Output, nioBytes, false)
+    val kernel = program.createKernel(method, width.asInstanceOf[AnyRef], height.asInstanceOf[AnyRef], workSize.asInstanceOf[AnyRef], resultsBuffer)
     kernel.enqueueNDRange(queue, Array(bufLength / workSize), Array(1))
     queue.finish
     nioBytes
