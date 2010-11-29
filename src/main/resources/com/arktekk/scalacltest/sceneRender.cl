@@ -32,9 +32,9 @@ float hit(const struct vector pos, const struct vector dir, const struct sphere 
     if (t1 > 0 && t2 > 0)
       return (t1 < t2) ? t1 : t2;
     else
-      return -1.0;
+      return -1.0f;
   } else
-    return -1.0;
+    return -1.0f;
 }
 
 float vectDot(const struct vector v1, const struct vector v2) {
@@ -72,34 +72,34 @@ struct vector vectNormalize(const struct vector v) {
 }
 
 float fpow(const float v, const int p) {
-  float ret = 1.0;
+  float ret = 1.0f;
   for (int i = 0; i < p; ++i)
     ret *= v;
   return ret;
 }
 
 float trace(const struct spheres spheresStruct, const struct vector origDir, const struct vector lightDir, const struct vector origPos) {
-  float s = 0.0;
+  float s = 0.0f;
   struct vector dir = origDir;
   struct vector pos = origPos;
   for (int round = 0; round < 10; ++round) {
-    float t = -1.0;
+    float t = -1.0f;
     int idx = -1;
     for (int i = 0; i < spheresStruct.c; ++i) {
       const struct sphere sphere = spheresStruct.ss[i];
       const float tmp = hit(pos, dir, sphere);
-      if (tmp != -1.0 && (t == -1.0 || tmp < t)) {
+      if (tmp != -1.0f && (t == -1.0f || tmp < t)) {
         t = tmp;
         idx = i;
       }
     }
-    if (t == -1.0)
+    if (t == -1.0f)
       return s;
     const struct sphere sphere = spheresStruct.ss[idx];
     const struct vector norm = vectNormalize(normal(pos, dir, t, sphere));
     const struct vector reflect = reflection(norm, dir);
     const float angle = acos(vectDot(lightDir, vectNormalize(reflect)));
-    s += fpow(0.25, round) * angle / 3.142;
+    s += fpow(0.25f, round) * angle / 3.142f;
     pos = vectAdd(vectConstMul(t, dir), pos);
     dir = reflect;
   }
@@ -107,25 +107,25 @@ float trace(const struct spheres spheresStruct, const struct vector origDir, con
 }
 
 int render(const float x, const float y, const struct spheres spheresStruct, const struct vector dir, const struct vector lightDir) {
-  const struct vector pos = {x, y, 0.0};
+  const struct vector pos = {x, y, 0.0f};
   const float s = trace(spheresStruct, dir, lightDir, pos);
-  return (int) ((s > 1.0 ? 1.0 : s) * 65535.0);
+  return (int) ((s > 1.0f ? 1.0f : s) * 65535.0f);
 }
 
 __kernel void sceneRender(const int width, const int height, const int workSize, __global int* output) {
   int workItem = get_global_id(0);
   const struct sphere spheres[3] = {
-    {0.5, 0.0, 5.0, 0.25},
-    {-0.5, 0.0, 5.0, 0.25},
-    {0.0, 0.0, 4.5, 0.25}
+    {0.5f, 0.0f, 5.0f, 0.25f},
+    {-0.5f, 0.0f, 5.0f, 0.25f},
+    {0.0f, 0.0f, 4.5f, 0.25f}
   };
   const struct spheres spheresStruct = { spheres, 3 };
-  const struct vector dir = {0.0, 0.0, 1.0};
-  const struct vector lightDir = vectNormalize((struct vector){1.0, 1.0, 1.0});
+  const struct vector dir = {0.0f, 0.0f, 1.0f};
+  const struct vector lightDir = vectNormalize((struct vector){1.0f, 1.0f, 1.0f});
   for (int i = 0; i < workSize; ++i) {
     int pos = i + workItem * workSize;
     float x = pos % width - width / 2;
     float y = pos / width - height / 2;
-    output[pos] = render(2.0 * x / width, 2.0 * y / width, spheresStruct, dir, lightDir);
+    output[pos] = render(2.0f * x / width, 2.0f * y / width, spheresStruct, dir, lightDir);
   }
 }
