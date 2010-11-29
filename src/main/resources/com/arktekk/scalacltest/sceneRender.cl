@@ -1,19 +1,19 @@
 struct vector {
-  float x;
-  float y;
-  float z;
+  const float x;
+  const float y;
+  const float z;
 };
 
 struct sphere {
-  float x;
-  float y;
-  float z;
-  float r;
+  const float x;
+  const float y;
+  const float z;
+  const float r;
 };
 
 struct spheres {
-  struct sphere* ss;
-  int c;
+  const struct sphere* ss;
+  const int c;
 };
 
 float sqr(const float v) {
