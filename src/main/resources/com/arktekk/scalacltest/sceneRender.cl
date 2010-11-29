@@ -113,7 +113,6 @@ int render(const float x, const float y, const struct spheres spheresStruct, con
 }
 
 __kernel void sceneRender(const int width, const int height, const int workSize, __global int* output) {
-  struct vector a = {0.0f, 0.2f, 0.3f};
   int workItem = get_global_id(0);
   const struct sphere spheres[3] = {
     {0.5, 0.0, 5.0, 0.25},
