@@ -106,16 +106,8 @@ float trace(const struct spheres spheresStruct, const struct vector origDir, con
   return s;
 }
 
-int render(const float x, const float y) {
+int render(const float x, const float y, const struct spheres spheresStruct, const struct vector dir, const struct vector lightDir) {
   const struct vector pos = {x, y, 0.0};
-  const struct vector dir = {0.0, 0.0, 1.0};
-  const struct vector lightDir = vectNormalize((struct vector){1.0, 1.0, 1.0});
-  const struct sphere spheres[3] = {
-    {0.5, 0.0, 5.0, 0.25},
-    {-0.5, 0.0, 5.0, 0.25},
-    {0.0, 0.0, 4.5, 0.25}
-  };
-  const struct spheres spheresStruct = { spheres, 3 };
   const float s = trace(spheresStruct, dir, lightDir, pos);
   return (int) ((s > 1.0 ? 1.0 : s) * 65535.0);
 }
@@ -123,10 +115,18 @@ int render(const float x, const float y) {
 __kernel void sceneRender(const int width, const int height, const int workSize, __global int* output) {
   struct vector a = {0.0f, 0.2f, 0.3f};
   int workItem = get_global_id(0);
+  const struct sphere spheres[3] = {
+    {0.5, 0.0, 5.0, 0.25},
+    {-0.5, 0.0, 5.0, 0.25},
+    {0.0, 0.0, 4.5, 0.25}
+  };
+  const struct spheres spheresStruct = { spheres, 3 };
+  const struct vector dir = {0.0, 0.0, 1.0};
+  const struct vector lightDir = vectNormalize((struct vector){1.0, 1.0, 1.0});
   for (int i = 0; i < workSize; ++i) {
     int pos = i + workItem * workSize;
     float x = pos % width - width / 2;
     float y = pos / width - height / 2;
-    output[pos] = render(2.0 * x / width, 2.0 * y / width);
+    output[pos] = render(2.0 * x / width, 2.0 * y / width, spheresStruct, dir, lightDir);
   }
 }
