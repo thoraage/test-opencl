@@ -10,7 +10,7 @@ h1. Prerequisites
 
 h2. Java
 
-Downloadable from Oracle or already preinstalled. Google for 'jdk <your operating system>'. Your operating system is probably windows if you're unsure what it is. If you've never heard about an operating system it will probably be mac.
+Downloadable from Oracle or already preinstalled. Google for 'jdk ==<your operating system>=='. Your operating system is probably windows if you're unsure what it is. If you've never heard about an operating system it will probably be mac.
 
 h2. SBT
 
@@ -28,7 +28,7 @@ h4. Linux + Ubuntu + ATI
 
 Download and unpack correct tar-balls ATI Stream SDK and ICD registration from "ATI Stream":http://developer.amd.com/gpu/atistreamsdk/pages/default.aspx.
 
-* Add the library path: 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<ATI Stream sdk>/lib/<platform>'
+* Add the library path: 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:==<ATI Stream sdk>/lib/<platform>=='
 * Copy ICD registration directory under 'etc' to '/etc'
 
 PS: Had to install X with ATI OpenGL drivers as well on a server machine (although thats probably a little over the board)
