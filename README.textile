@@ -1,0 +1,51 @@
+h1. What is this
+
+Result of testing out JavaCL (and ScalaCL / ScalaCL-plugin) implemented in Scala.
+
+Basically a simple scene rendering (ray-tracing) where the scene is defined in the OpenCL-program.
+
+Quite useless, but works great as example and benchmark.
+
+h1. Prerequisites
+
+h2. Java
+
+Downloadable from Oracle or already preinstalled. Google for 'jdk <your operating system>'. Your operating system is probably windows if you're unsure what it is. If you've never heard about an operating system it will probably be mac.
+
+h2. SBT
+
+Build tool of choice for a scala generation. See http://code.google.com/p/simple-build-tool/ for instructions.
+
+h2. OpenCL
+
+Since this is very platform and graphics card dependent this will vary. If you don't find the information you need below try out "ATI":http://developer.amd.com/gpu/ATIStreamSDK/Pages/default.aspx for ATI cards or "Nvidia":http://www.nvidia.com/object/cuda_opencl_new.html for Nvidia. Noone using anything else; right?!
+
+h3. Mac OS X
+
+Post 10.6 (Snow Leopard) this is included.
+
+h4. Linux
+
+h5. ATI + Ubuntu
+
+Download and unpack correct tar-balls ATI Stream SDK and ICD registration from "ATI Stream":http://developer.amd.com/gpu/atistreamsdk/pages/default.aspx.
+
+* Add the library path: 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<ATI Stream sdk>/lib/<platform>'
+* Copy ICD registration directory under 'etc' to '/etc'
+
+PS: Had to install X with ATI OpenGL drivers as well on a server machine (although thats probably a little over the board)
+
+h5. Nvidia
+
+* Install package 'python-pyopencl'; it seem to retrieve everything neccessary: 'sudo apt-get install python-pyopencl'
+
+h1. Usage
+
+Start 'sbt' and use the 'run' and select among the main-classes detected:
+
+|*Name*|*Description*|
+|...SceneRenderToDevNull|Scene rendered with results thrown away. Used to measure platform performance|
+|...SceneRenderToText|Scene rendered to text. Simple & fast|
+|...SceneRenderToSwing|Scene rendered to swing frame (theoretically horrendously slow, but not so in practice)|
+|...PiCalculationTest|Stupid π-calculation test that is not very accurate since most OpenCL-implementations does not support double precision|
+
