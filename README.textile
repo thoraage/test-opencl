@@ -24,9 +24,7 @@ h3. Mac OS X
 
 Post 10.6 (Snow Leopard) this is included.
 
-h4. Linux
-
-h5. ATI + Ubuntu
+h4. Linux + Ubuntu + ATI
 
 Download and unpack correct tar-balls ATI Stream SDK and ICD registration from "ATI Stream":http://developer.amd.com/gpu/atistreamsdk/pages/default.aspx.
 
@@ -35,7 +33,7 @@ Download and unpack correct tar-balls ATI Stream SDK and ICD registration from "
 
 PS: Had to install X with ATI OpenGL drivers as well on a server machine (although thats probably a little over the board)
 
-h5. Nvidia
+h4. Linux + Ubuntu + Nvidia
 
 * Install package 'python-pyopencl'; it seem to retrieve everything neccessary: 'sudo apt-get install python-pyopencl'
 
