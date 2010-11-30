@@ -4,11 +4,18 @@ struct vector {
   float z;
 };
 
+struct colour {
+  float r;
+  float g;
+  float b;
+};
+
 struct sphere {
   float x;
   float y;
   float z;
   float r;
+  struct colour c;
 };
 
 struct spheres {
@@ -78,8 +85,8 @@ float fpow(float v, int p) {
   return ret;
 }
 
-float trace(struct spheres spheresStruct, struct vector origDir, struct vector lightDir, struct vector origPos) {
-  float s = 0.0f;
+struct colour trace(struct spheres spheresStruct, struct vector origDir, struct vector lightDir, struct vector origPos) {
+  struct colour colour = (struct colour){0.0f, 0.0f, 0.0f};
   struct vector dir = origDir;
   struct vector pos = origPos;
   for (int round = 0; round < 10; ++round) {
@@ -94,31 +101,42 @@ float trace(struct spheres spheresStruct, struct vector origDir, struct vector l
       }
     }
     if (t == -1.0f)
-      return s;
+      return colour;
     struct sphere sphere = spheresStruct.ss[idx];
     struct vector norm = vectNormalize(normal(pos, dir, t, sphere));
     struct vector reflect = reflection(norm, dir);
     float angle = acos(vectDot(lightDir, vectNormalize(reflect)));
-    s += fpow(0.25f, round) * angle / 3.142f;
+    colour.r += sphere.c.r * fpow(0.25f, round) * angle / 3.142f;
+    colour.g += sphere.c.g * fpow(0.25f, round) * angle / 3.142f;
+    colour.b += sphere.c.b * fpow(0.25f, round) * angle / 3.142f;
     pos = vectAdd(vectConstMul(t, dir), pos);
     dir = reflect;
   }
-  return s;
+  return colour;
+}
+
+struct colour colNorm(struct colour colour) {
+  float r = colour.r > 1.0f ? 1.0f : colour.r;
+  float g = colour.g > 1.0f ? 1.0f : colour.g;
+  float b = colour.b > 1.0f ? 1.0f : colour.b;
+  return (struct colour) {r, g, b};
 }
 
 int render(float x, float y, struct spheres spheresStruct, struct vector dir, struct vector lightDir) {
   struct vector pos = {x, y, 0.0f};
-  float s = trace(spheresStruct, dir, lightDir, pos);
-  int value = (int)((s > 1.0f ? 1.0f : s) * 255.0f);
-  return value + (value << 8) + (value << 16);
+  struct colour colour = colNorm(trace(spheresStruct, dir, lightDir, pos));
+  int r = (int)(colour.r * 255.0f);
+  int g = (int)(colour.g * 255.0f);
+  int b = (int)(colour.b * 255.0f);
+  return b + (g << 8) + (r << 16);
 }
 
 __kernel void sceneRender(int width, int height, int workSize, __global int* output) {
   int workItem = get_global_id(0);
   struct sphere spheres[3] = {
-    {0.5f, 0.0f, 5.0f, 0.25f},
-    {-0.5f, 0.0f, 5.0f, 0.25f},
-    {0.0f, 0.0f, 4.5f, 0.25f}
+    {0.5f, 0.0f, 5.0f, 0.25f, {1.0f, 0.0f, 0.0f}},
+    {-0.5f, 0.0f, 5.0f, 0.25f, {0.0f, 1.0f, 0.0f}},
+    {0.0f, 0.0f, 4.5f, 0.25f, {0.0f, 0.0f, 1.0f}}
   };
   struct spheres spheresStruct = { spheres, 3 };
   struct vector dir = {0.0f, 0.0f, 1.0f};
