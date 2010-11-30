@@ -109,7 +109,8 @@ float trace(struct spheres spheresStruct, struct vector origDir, struct vector l
 int render(float x, float y, struct spheres spheresStruct, struct vector dir, struct vector lightDir) {
   struct vector pos = {x, y, 0.0f};
   float s = trace(spheresStruct, dir, lightDir, pos);
-  return (int) ((s > 1.0f ? 1.0f : s) * 65535.0f);
+  int value = (int)((s > 1.0f ? 1.0f : s) * 255.0f);
+  return value + (value << 8) + (value << 16);
 }
 
 __kernel void sceneRender(int width, int height, int workSize, __global int* output) {

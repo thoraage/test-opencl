@@ -21,12 +21,7 @@ trait SwingRenderer extends Renderer {
     val intBuffer = time("Rendering: ") { render }
     val image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
     for (x <- 0 until width; y <- 0 until height) {
-      val value = intBuffer.get(x + y * width)
-      def crazyNormalize(v: Int) = v + v * 256 + v * 65536
-      if (false)//random.nextBoolean)
-        image.setRGB(x, y, crazyNormalize(x * 256 / width))
-      else
-        image.setRGB(x, y, crazyNormalize(value / 256))
+      image.setRGB(x, y, intBuffer.get(x + y * width))
     }
     SwingUtilities.invokeLater(new Runnable() {
       def run: Unit = {
