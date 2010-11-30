@@ -122,8 +122,8 @@ struct colour colNorm(struct colour colour) {
   return (struct colour) {r, g, b};
 }
 
-int render(float x, float y, struct spheres spheresStruct, struct vector dir, struct vector lightDir) {
-  struct vector pos = {x, y, 0.0f};
+int render(float x, float y, struct spheres spheresStruct, struct vector pos, struct vector lightDir) {
+  struct vector dir = {x, y, 1.0f};
   struct colour colour = colNorm(trace(spheresStruct, dir, lightDir, pos));
   int r = (int)(colour.r * 255.0f);
   int g = (int)(colour.g * 255.0f);
@@ -134,17 +134,17 @@ int render(float x, float y, struct spheres spheresStruct, struct vector dir, st
 __kernel void sceneRender(int width, int height, int workSize, __global int* output) {
   int workItem = get_global_id(0);
   struct sphere spheres[3] = {
-    {0.5f, 0.0f, 5.0f, 0.25f, {1.0f, 0.0f, 0.0f}},
-    {-0.5f, 0.0f, 5.0f, 0.25f, {0.0f, 1.0f, 0.0f}},
-    {0.0f, 0.0f, 4.5f, 0.25f, {0.0f, 0.0f, 1.0f}}
+    {0.5f, 0.0f, 1.5f, 0.25f, {1.0f, 0.5f, 0.5f}},
+    {-0.5f, 0.0f, 1.5f, 0.25f, {0.5f, 1.0f, 0.5f}},
+    {0.0f, 0.0f, 1.0f, 0.25f, {0.5f, 0.5f, 1.0f}}
   };
   struct spheres spheresStruct = { spheres, 3 };
-  struct vector dir = {0.0f, 0.0f, 1.0f};
+  struct vector cameraPos = {0.0f, 0.0f, 0.0f};
   struct vector lightDir = vectNormalize((struct vector){1.0f, 1.0f, 1.0f});
   for (int i = 0; i < workSize; ++i) {
     int pos = i + workItem * workSize;
     float x = pos % width - width / 2;
     float y = pos / width - height / 2;
-    output[pos] = render(2.0f * x / width, 2.0f * y / width, spheresStruct, dir, lightDir);
+    output[pos] = render(x / width, y / width, spheresStruct, cameraPos, lightDir);
   }
 }
