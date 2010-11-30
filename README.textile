@@ -41,7 +41,7 @@ h5. Nvidia
 
 h1. Usage
 
-Start 'sbt' and use the 'run' and select among the main-classes detected:
+Start 'sbt' and use the 'run' command to select among the main-classes detected:
 
 |*Name*|*Description*|
 |...SceneRenderToDevNull|Scene rendered with results thrown away. Used to measure platform performance|
