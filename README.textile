@@ -43,7 +43,7 @@ h1. Usage
 
 Start 'sbt' and use the 'run' command to select among the main-classes detected:
 
-|*Name*|*Description*|
+|_.Name|_.Description|
 |...SceneRenderToDevNull|Scene rendered with results thrown away. Used to measure platform performance|
 |...SceneRenderToText|Scene rendered to text. Simple & fast|
 |...SceneRenderToSwing|Scene rendered to swing frame (theoretically horrendously slow, but not so in practice)|
