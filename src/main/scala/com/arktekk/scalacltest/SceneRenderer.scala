@@ -17,7 +17,6 @@ object SceneRenderToText extends SceneRenderer(80, 40) with TextRenderer {
   def main(args: Array[String]): Unit = time { draw }
 }
 
-
 class SceneRenderer(w: Int, h: Int) extends FrameGPUProcessor {
   def sourceFile = "sceneRender.cl"
   def method = "sceneRender"
